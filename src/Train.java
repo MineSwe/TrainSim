@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 
-public class Train {
+public class Train extends SimObject {
     private final ArrayList<Station> trainRoute = new ArrayList<>();
 
     Train(ArrayList<Station> _stations)
@@ -34,6 +34,12 @@ public class Train {
                 i--;
             }
         }
+    }
+
+    @Override
+    public void gameTick()
+    {
+        moveTrainToNextTrack();
     }
 
     private void moveTrainToNextTrack()

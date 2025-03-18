@@ -1,4 +1,4 @@
-public class Track {
+public class Track extends SimObject {
     private Track previousTrack;
     private Track nextTrack;
     private Station stationNextToTrack;

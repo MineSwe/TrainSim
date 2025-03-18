@@ -6,8 +6,9 @@ public class TrainController {
     private final int amountOfTracksPerStation = 2;
     private final int amountOfTrains = 4;
     private final int gameTicksPerMilliseconds = 1000;
-    private boolean gameIsRunning = false; // GÖR DEN INTE FINAL STÖRSTA MISSTAGET NÅGONSIN
+    private boolean gameIsRunning = false; // DON'T DO IT FINAL, PLEASE
 
+    private final ArrayList<SimObject> simObjects = new ArrayList<>();
     private final ArrayList<Track> tracks = new ArrayList<>();
     private final ArrayList<Station> stations = new ArrayList<>();
     private final ArrayList<Train> trains = new ArrayList<>();
@@ -29,6 +30,7 @@ public class TrainController {
         {
             Track _track = new Track();
             tracks.add(_track);
+            simObjects.add(_track);
         }
     }
 
@@ -57,6 +59,7 @@ public class TrainController {
             Station.setAmountOfTracksPerStation(amountOfTracksPerStation);
             Station _station = new Station();
             stations.add(_station);
+            simObjects.add(_station);
         }
     }
 
@@ -67,6 +70,7 @@ public class TrainController {
             Track _track = tracks.get(i*amountOfTracksBetweenStations);
             Station _station = stations.get(i);
             _track.setStationNextToTrack(_station);
+            simObjects.add(_track);
         }
     }
 
@@ -76,6 +80,7 @@ public class TrainController {
         {
             Train _train = new Train(stations);
             trains.add(_train);
+            simObjects.add(_train);
         }
     }
 
@@ -94,14 +99,10 @@ public class TrainController {
 
     private void gameTick()
     {
-        moveAllTrains();
-    }
-
-    private void moveAllTrains()
-    {
-        for (int i = 0; i < amountOfTrains; i++)
+        for (int i = 0; i < simObjects.size(); i++)
         {
-            Train train = trains.get(i);
+            SimObject simObject = simObjects.get(i);
+            simObject.gameTick();
         }
     }
 }
