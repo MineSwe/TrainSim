@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class TrainController {
-    private final int amountOfTracksBetweenEachCorner = 2;
+    private final int amountOfTracksBetweenEachCorner = 4;
     private final int amountOfStations = 6;
     private final int amountOfTracksPerStation = 2;
     private final int amountOfTrains = 4;
@@ -71,7 +71,7 @@ public class TrainController {
             int _trackIndex;
             if (i < 4)
             {
-                _trackIndex = i*amountOfTracksBetweenEachCorner;
+                _trackIndex = i*amountOfTracksBetweenEachCorner + amountOfTracksBetweenEachCorner - 1;
                 Track _track = tracks.get(_trackIndex);
                 Station _station = stations.get(i);
                 _track.setStationNextToTrack(_station);
@@ -79,7 +79,7 @@ public class TrainController {
             }
             else
             {
-                _trackIndex = (i-4) * amountOfTracksBetweenEachCorner + (amountOfTracksBetweenEachCorner / 2);
+                _trackIndex = ((i-4) * amountOfTracksBetweenEachCorner + (amountOfTracksBetweenEachCorner / 2)) -1;
                 Track _track = tracks.get(_trackIndex);
                 Station _station = stations.get(i);
                 _track.setStationNextToTrack(_station);
