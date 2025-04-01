@@ -1,7 +1,9 @@
 public class Track extends SimObject {
     private Track previousTrack;
     private Track nextTrack;
+    private boolean isNextToStation;
     private Station stationNextToTrack;
+    private int angle;
 
     public void setPreviousTrack(Track _previousTrack)
     {

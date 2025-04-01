@@ -5,6 +5,7 @@ public class TrainController {
     private final int amountOfStations = 6;
     private final int amountOfTracksPerStation = 2;
     private final int amountOfTrains = 4;
+    private final int loadTimeInMilliseconds = 5000;
     private final int gameTicksPerMilliseconds = 1000;
     private boolean gameIsRunning = false; // DON'T DO IT FINAL, PLEASE
 
@@ -91,6 +92,7 @@ public class TrainController {
 
     private void createTrains()
     {
+        Train.setLoadTimeInMilliseconds(this.loadTimeInMilliseconds);
         for (int i = 0; i < amountOfTrains; i++)
         {
             Train _train = new Train(stations);

@@ -1,9 +1,14 @@
 import java.util.ArrayList;
 
 public class Train extends SimObject {
+    private static int loadTimeInMilliseconds;
     private final ArrayList<Station> trainRoute = new ArrayList<>();
     private boolean isOnTrack = false;
     private boolean isInStation = true;
+    private Track currentTrack;
+    private Station currentStation;
+    private int dx;
+    private int dy;
 
     Train(ArrayList<Station> _stations)
     {
@@ -38,6 +43,11 @@ public class Train extends SimObject {
         }
     }
 
+    static public void setLoadTimeInMilliseconds(int _loadTimeInMilliseconds)
+    {
+        Train.loadTimeInMilliseconds = _loadTimeInMilliseconds;
+    }
+
     @Override
     public void gameTick()
     {
@@ -47,17 +57,19 @@ public class Train extends SimObject {
         }
         else if (isInStation)
         {
-
+            this.currentTrack = this.currentStation.getNextTrack();
         }
     }
 
     private void moveTrain()
     {
-        
+        this.x += this.dx;
+        this.y += this.dy;
     }
 
     private void moveTrainToNextTrack()
     {
-        
+        Track _nextTrack = this.currentStation.getNextTrack();
+        // Get angle and calculate dx & dy
     }
 }
