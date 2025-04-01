@@ -1,5 +1,7 @@
 public class Station extends SimObject {
     private static int amountOfTracksPerStation;
+    private int amountOfTrainsOnStation = 0;
+    private Track nextTrack;
 
     public static void setAmountOfTracksPerStation(int _amountOfTracksPerStation)
     {
@@ -9,5 +11,25 @@ public class Station extends SimObject {
     public static int getAmountOfTracksPerStation()
     {
         return amountOfTracksPerStation;
+    }
+
+    public void setAmountOfTrainsOnStation(int _amountOfTrainsOnStation)
+    {
+        this.amountOfTrainsOnStation = _amountOfTrainsOnStation;
+    }
+
+    public int getAmountOfTrainsOnStation()
+    {
+        return this.amountOfTrainsOnStation;
+    }
+
+    public void setNextTrack(Track _nextTrack)
+    {
+        this.nextTrack = _nextTrack;
+    }
+
+    public Track getNextTrack()
+    {
+        return this.nextTrack;
     }
 }

@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class TrainController {
-    private final int amountOfTracksBetweenStations = 2;
-    private final int amountOfStations = 4;
+    private final int amountOfTracksBetweenEachCorner = 2;
+    private final int amountOfStations = 6;
     private final int amountOfTracksPerStation = 2;
     private final int amountOfTrains = 4;
     private final int gameTicksPerMilliseconds = 1000;
@@ -25,7 +25,7 @@ public class TrainController {
 
     private void createTracks()
     {
-        int amountOfTracks = amountOfStations * amountOfTracksBetweenStations;
+        int amountOfTracks = amountOfStations * amountOfTracksBetweenEachCorner;
         for (int i = 0; i < amountOfTracks; i++)
         {
             Track _track = new Track();
@@ -54,23 +54,38 @@ public class TrainController {
 
     private void createStations()
     {
+        Station.setAmountOfTracksPerStation(amountOfTracksPerStation);
         for (int i = 0; i < amountOfStations; i++)
         {
-            Station.setAmountOfTracksPerStation(amountOfTracksPerStation);
             Station _station = new Station();
             stations.add(_station);
             simObjects.add(_station);
         }
     }
 
+    // Adds 4 stations to each corner, then 4 stations to the middle
     private void addStationsToTrack()
     {
         for (int i = 0; i < amountOfStations; i++)
         {
-            Track _track = tracks.get(i*amountOfTracksBetweenStations);
-            Station _station = stations.get(i);
-            _track.setStationNextToTrack(_station);
-            simObjects.add(_track);
+            int _trackIndex;
+            if (i < 4)
+            {
+                _trackIndex = i*amountOfTracksBetweenEachCorner;
+                Track _track = tracks.get(_trackIndex);
+                Station _station = stations.get(i);
+                _track.setStationNextToTrack(_station);
+                simObjects.add(_track);
+            }
+            else
+            {
+                _trackIndex = (i-4) * amountOfTracksBetweenEachCorner + (amountOfTracksBetweenEachCorner / 2);
+                Track _track = tracks.get(_trackIndex);
+                Station _station = stations.get(i);
+                _track.setStationNextToTrack(_station);
+                simObjects.add(_track);
+            }
+            System.out.println("Station " + i + " is on track " + _trackIndex);
         }
     }
 

@@ -2,6 +2,8 @@ import java.util.ArrayList;
 
 public class Train extends SimObject {
     private final ArrayList<Station> trainRoute = new ArrayList<>();
+    private boolean isOnTrack = false;
+    private boolean isInStation = true;
 
     Train(ArrayList<Station> _stations)
     {
@@ -39,7 +41,19 @@ public class Train extends SimObject {
     @Override
     public void gameTick()
     {
-        moveTrainToNextTrack();
+        if (isOnTrack)
+        {
+            moveTrain();
+        }
+        else if (isInStation)
+        {
+
+        }
+    }
+
+    private void moveTrain()
+    {
+        
     }
 
     private void moveTrainToNextTrack()
