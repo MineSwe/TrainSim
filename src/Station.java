@@ -32,4 +32,16 @@ public class Station extends SimObject {
     {
         return this.nextTrack;
     }
+
+    public boolean isTrackAvailable()
+    {
+        if (this.amountOfTrainsOnStation > Station.amountOfTracksPerStation)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 }

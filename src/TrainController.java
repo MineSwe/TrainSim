@@ -39,16 +39,12 @@ public class TrainController {
     {
         int _lastTrackIndex = tracks.size() - 1;
         Track _lastTrack = tracks.get(_lastTrackIndex);
-        tracks.get(0).setPreviousTrack(_lastTrack);
         tracks.get(0).setNextTrack(tracks.get(1));
-        tracks.get(_lastTrackIndex).setPreviousTrack(tracks.get(_lastTrackIndex-1));
         tracks.get(_lastTrackIndex).setNextTrack(tracks.get(1));
         for (int i = 1; i < tracks.size()-1; i++)
         {
             Track _track = tracks.get(i);
-            Track _previousTrack = tracks.get(i-1);
             Track _nextTrack = tracks.get(i+1);
-            _track.setPreviousTrack(_previousTrack);
             _track.setNextTrack(_nextTrack);
         }
     }

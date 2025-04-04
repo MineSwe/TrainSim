@@ -1,14 +1,9 @@
 public class Track extends SimObject {
-    private Track previousTrack;
     private Track nextTrack;
     private boolean isNextToStation;
+    private boolean isEmpty;
     private Station stationNextToTrack;
     private int angle;
-
-    public void setPreviousTrack(Track _previousTrack)
-    {
-        this.previousTrack = _previousTrack;
-    }
 
     public void setNextTrack(Track _nextTrack)
     {
@@ -20,6 +15,16 @@ public class Track extends SimObject {
         return this.nextTrack;
     }
 
+    public boolean isNextToStation()
+    {
+        return this.isNextToStation;
+    }
+
+    public boolean isEmpty()
+    {
+        return this.isEmpty;
+    }
+
     public void setStationNextToTrack(Station _stationNextToTrack)
     {
         this.stationNextToTrack = _stationNextToTrack;
@@ -27,6 +32,11 @@ public class Track extends SimObject {
 
     public Station getStationNextToTrack()
     {
-        return stationNextToTrack;
+        return this.stationNextToTrack;
+    }
+
+    public int getAngle()
+    {
+        return this.angle;
     }
 }

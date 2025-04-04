@@ -2,7 +2,10 @@ import java.util.ArrayList;
 
 public class Train extends SimObject {
     private static int loadTimeInMilliseconds;
+    private static int speed;
+
     private final ArrayList<Station> trainRoute = new ArrayList<>();
+    private int routeIndex = 0;
     private boolean isOnTrack = false;
     private boolean isInStation = true;
     private Track currentTrack;
@@ -43,6 +46,11 @@ public class Train extends SimObject {
         }
     }
 
+    static public void setSpeed(int _speed)
+    {
+        Train.speed = _speed;
+    }
+
     static public void setLoadTimeInMilliseconds(int _loadTimeInMilliseconds)
     {
         Train.loadTimeInMilliseconds = _loadTimeInMilliseconds;
@@ -54,6 +62,10 @@ public class Train extends SimObject {
         if (isOnTrack)
         {
             moveTrain();
+            if (this.x == this.currentTrack.x)
+            {
+                moveTrainFromTrack();
+            }
         }
         else if (isInStation)
         {
@@ -67,9 +79,33 @@ public class Train extends SimObject {
         this.y += this.dy;
     }
 
-    private void moveTrainToNextTrack()
+    private void moveTrainFromTrack()
     {
-        Track _nextTrack = this.currentStation.getNextTrack();
-        // Get angle and calculate dx & dy
+        if (this.currentTrack.isNextToStation() == true)
+        {
+            if (this.currentTrack.getStationNextToTrack() == this.trainRoute.get(routeIndex) && 
+            this.currentTrack.getStationNextToTrack().isTrackAvailable() == true)
+            this.currentStation = this.currentTrack.getStationNextToTrack();
+            this.currentTrack = null;
+            this.currentStation.setAmountOfTrainsOnStation(this.currentStation.getAmountOfTrainsOnStation() + 1);
+        }
+        else
+        {
+            if (this.currentTrack.getNextTrack().isEmpty())
+            {
+                this.currentTrack = this.currentTrack.getNextTrack();
+                // If dy is negative the components of the angle (dy, dx) change places
+                if (dy < 0)
+                {
+                    dx = (int) (dy / Math.tan(this.currentTrack.getAngle()));
+                    dy = (int) (dx * Math.tan(this.currentTrack.getAngle()));
+                }
+                else
+                {
+                    dx = (int) (dy * Math.tan(this.currentTrack.getAngle()));
+                    dy = (int) (dx / Math.tan(this.currentTrack.getAngle()));
+                }
+            }
+        }
     }
 }
