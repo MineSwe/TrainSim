@@ -3,7 +3,13 @@ public class Track extends SimObject {
     private boolean isNextToStation;
     private boolean isEmpty;
     private Station stationNextToTrack;
-    private int angle;
+    // 0 degrees is north and increases clockwise
+    private final int angle;
+
+    Track(int _angle)
+    {
+        this.angle = _angle;
+    }
 
     public void setNextTrack(Track _nextTrack)
     {

@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class Train extends SimObject {
-    private static int loadTimeInMilliseconds;
+    private static int loadTimeInGameTicks;
     private static int speed;
 
     private final ArrayList<Station> trainRoute = new ArrayList<>();
@@ -22,22 +22,22 @@ public class Train extends SimObject {
     {
         for (int i = 0; i < _stations.size(); i++)
         {
-            int randomStationsIndex = (int)(Math.random() * _stations.size());
-            Station stationToAdd = _stations.get(randomStationsIndex);
-            boolean canAddStation = true;
+            int _randomStationsIndex = (int)(Math.random() * _stations.size());
+            Station _stationToAdd = _stations.get(_randomStationsIndex);
+            boolean _canAddStation = true;
 
             for (int j = 0; j < trainRoute.size(); j++)
             {
-                Station stationThatExistInRoute = trainRoute.get(j);
-                if (stationToAdd == stationThatExistInRoute)
+                Station _stationThatExistInRoute = trainRoute.get(j);
+                if (_stationToAdd == _stationThatExistInRoute)
                 {
-                    canAddStation = false;
+                    _canAddStation = false;
                 }
             }
 
-            if (canAddStation == true)
+            if (_canAddStation == true)
             {
-                trainRoute.add(stationToAdd);
+                trainRoute.add(_stationToAdd);
             }
             else
             {
@@ -51,29 +51,30 @@ public class Train extends SimObject {
         Train.speed = _speed;
     }
 
-    static public void setLoadTimeInMilliseconds(int _loadTimeInMilliseconds)
+    static public void setLoadTimeInGameTicks(int _loadTimeInGameTicks)
     {
-        Train.loadTimeInMilliseconds = _loadTimeInMilliseconds;
+        Train.loadTimeInGameTicks = _loadTimeInGameTicks;
     }
 
     @Override
     public void gameTick()
     {
-        if (isOnTrack)
+        if (this.isOnTrack)
         {
-            moveTrain();
-            if (this.x == this.currentTrack.x)
+            this.moveTrainAlongTrack();
+            if (Math.abs(this.x - this.currentTrack.x) < Math.abs(this.dx) && 
+            Math.abs(this.y - this.currentTrack.y) < Math.abs(this.dy))
             {
-                moveTrainFromTrack();
+                this.moveTrainFromTrack();
             }
         }
-        else if (isInStation)
+        else if (this.isInStation)
         {
             this.currentTrack = this.currentStation.getNextTrack();
         }
     }
 
-    private void moveTrain()
+    private void moveTrainAlongTrack()
     {
         this.x += this.dx;
         this.y += this.dy;
@@ -85,27 +86,30 @@ public class Train extends SimObject {
         {
             if (this.currentTrack.getStationNextToTrack() == this.trainRoute.get(routeIndex) && 
             this.currentTrack.getStationNextToTrack().isTrackAvailable() == true)
-            this.currentStation = this.currentTrack.getStationNextToTrack();
-            this.currentTrack = null;
-            this.currentStation.setAmountOfTrainsOnStation(this.currentStation.getAmountOfTrainsOnStation() + 1);
+            {
+                this.moveToStation(this.currentTrack.getStationNextToTrack());
+            }
         }
         else
         {
+            // If track has no trains
             if (this.currentTrack.getNextTrack().isEmpty())
             {
                 this.currentTrack = this.currentTrack.getNextTrack();
-                // If dy is negative the components of the angle (dy, dx) change places
-                if (dy < 0)
-                {
-                    dx = (int) (dy / Math.tan(this.currentTrack.getAngle()));
-                    dy = (int) (dx * Math.tan(this.currentTrack.getAngle()));
-                }
-                else
-                {
-                    dx = (int) (dy * Math.tan(this.currentTrack.getAngle()));
-                    dy = (int) (dx / Math.tan(this.currentTrack.getAngle()));
-                }
+
+                // 0 degrees is north and increases clockwise
+                dx = (int) Math.sin(this.currentTrack.getAngle()) * Train.speed;
+                dy = (int) Math.cos(this.currentTrack.getAngle()) * Train.speed;
             }
         }
+    }
+
+    private void moveToStation(Station _station)
+    {
+        this.currentStation = _station;
+        this.currentTrack = null;
+        _station.setAmountOfTrainsOnStation(_station.getAmountOfTrainsOnStation() + 1);
+        this.isOnTrack = false;
+        this.isInStation = true;
     }
 }

@@ -26,44 +26,49 @@ public class TrainController {
 
     private void createTracks()
     {
-        int amountOfTracks = amountOfStations * amountOfTracksBetweenEachCorner;
-        for (int i = 0; i < amountOfTracks; i++)
+        int _amountOfTracks = this.amountOfStations * this.amountOfTracksBetweenEachCorner;
+        int _angle = 0;
+        for (int i = 0; i < 4; i++)
         {
-            Track _track = new Track();
-            tracks.add(_track);
-            simObjects.add(_track);
+            for (int j = 0; j < _amountOfTracks; j++)
+            {
+                Track _track = new Track(_angle);
+                this.tracks.add(_track);
+                this.simObjects.add(_track);
+            }
+            _angle += 90;
         }
     }
 
     private void linkTracks()
     {
-        int _lastTrackIndex = tracks.size() - 1;
-        Track _lastTrack = tracks.get(_lastTrackIndex);
-        tracks.get(0).setNextTrack(tracks.get(1));
-        tracks.get(_lastTrackIndex).setNextTrack(tracks.get(1));
-        for (int i = 1; i < tracks.size()-1; i++)
+        for (int i = 0; i < this.tracks.size()-1; i++)
         {
             Track _track = tracks.get(i);
             Track _nextTrack = tracks.get(i+1);
             _track.setNextTrack(_nextTrack);
+            // Makes last track connect to first track
+            int _lastTrackIndex = this.tracks.size() - 1;
+            Track _lastTrack = this.tracks.get(_lastTrackIndex);
+            _lastTrack.setNextTrack(this.tracks.get(0));
         }
     }
 
     private void createStations()
     {
-        Station.setAmountOfTracksPerStation(amountOfTracksPerStation);
-        for (int i = 0; i < amountOfStations; i++)
+        Station.setAmountOfTracksPerStation(this.amountOfTracksPerStation);
+        for (int i = 0; i < this.amountOfStations; i++)
         {
             Station _station = new Station();
-            stations.add(_station);
-            simObjects.add(_station);
+            this.stations.add(_station);
+            this.simObjects.add(_station);
         }
     }
 
     // Adds 4 stations to each corner, then 4 stations to the middle
     private void addStationsToTrack()
     {
-        for (int i = 0; i < amountOfStations; i++)
+        for (int i = 0; i < this.amountOfStations; i++)
         {
             int _trackIndex;
             if (i < 4)
@@ -72,7 +77,7 @@ public class TrainController {
                 Track _track = tracks.get(_trackIndex);
                 Station _station = stations.get(i);
                 _track.setStationNextToTrack(_station);
-                simObjects.add(_track);
+                this.simObjects.add(_track);
             }
             else
             {
@@ -80,20 +85,21 @@ public class TrainController {
                 Track _track = tracks.get(_trackIndex);
                 Station _station = stations.get(i);
                 _track.setStationNextToTrack(_station);
-                simObjects.add(_track);
+                this.simObjects.add(_track);
             }
-            System.out.println("Station " + i + " is on track " + _trackIndex);
         }
     }
 
     private void createTrains()
     {
-        Train.setLoadTimeInMilliseconds(this.loadTimeInMilliseconds);
-        for (int i = 0; i < amountOfTrains; i++)
+        int _loadTimeInGameTicks = (int) Math.ceil(loadTimeInMilliseconds / gameTicksPerMilliseconds);
+        Train.setLoadTimeInGameTicks(_loadTimeInGameTicks);
+        for (int i = 0; i < this.amountOfTrains; i++)
         {
-            Train _train = new Train(stations);
-            trains.add(_train);
-            simObjects.add(_train);
+            // "stations" is needed for train route
+            Train _train = new Train(this.stations);
+            this.trains.add(_train);
+            this.simObjects.add(_train);
         }
     }
 
@@ -102,9 +108,9 @@ public class TrainController {
         long _lastExecution = System.currentTimeMillis();
         while (gameIsRunning)
         {
-            if (System.currentTimeMillis() - _lastExecution >= gameTicksPerMilliseconds)
+            if (System.currentTimeMillis() - _lastExecution >= this.gameTicksPerMilliseconds)
             {
-                gameTick();
+                this.gameTick();
                 _lastExecution = System.currentTimeMillis();
             }
         }
@@ -112,10 +118,10 @@ public class TrainController {
 
     private void gameTick()
     {
-        for (int i = 0; i < simObjects.size(); i++)
+        for (int i = 0; i < this.simObjects.size(); i++)
         {
-            SimObject simObject = simObjects.get(i);
-            simObject.gameTick();
+            SimObject _simObject = this.simObjects.get(i);
+            _simObject.gameTick();
         }
     }
 }
