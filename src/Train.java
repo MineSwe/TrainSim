@@ -62,8 +62,8 @@ public class Train extends SimObject {
         if (this.isOnTrack)
         {
             this.moveTrainAlongTrack();
-            if (Math.abs(this.x - this.currentTrack.x) < Math.abs(this.dx) && 
-            Math.abs(this.y - this.currentTrack.y) < Math.abs(this.dy))
+            if (Math.abs(this.getX() - this.currentTrack.getX()) < Math.abs(this.dx) && 
+            Math.abs(this.getY() - this.currentTrack.getY()) < Math.abs(this.dy))
             {
                 this.moveTrainFromTrack();
             }
@@ -76,8 +76,8 @@ public class Train extends SimObject {
 
     private void moveTrainAlongTrack()
     {
-        this.x += this.dx;
-        this.y += this.dy;
+        this.setX(this.getX() + this.dx);
+        this.setY(this.getY() + this.dy);
     }
 
     private void moveTrainFromTrack()
