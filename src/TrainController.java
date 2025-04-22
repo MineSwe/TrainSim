@@ -1,16 +1,19 @@
 import java.util.ArrayList;
 
 public class TrainController {
-    private final int amountOfTracksBetweenEachCorner = 4;
     private final int trackBottomRightX = 200;
     private final int trackBottomRightY = 200;
     private final int trackLength = 20;
+    private final int stationWidth = 20;
+
+    private final int amountOfTracksBetweenEachCorner = 4;
     private final int amountOfStations = 6;
     private final int amountOfTracksPerStation = 2;
     private final int amountOfTrains = 4;
+    private final int trainSpeed = 5;
     private final int loadTimeInMilliseconds = 5000;
     private final int gameTicksPerMilliseconds = 1000;
-    private boolean gameIsRunning = false; // DON'T DO IT FINAL, PLEASE
+    private boolean gameIsRunning = true; // DON'T DO IT FINAL, PLEASE
 
     private final ArrayList<SimObject> simObjects = new ArrayList<>();
     private final ArrayList<Track> tracks = new ArrayList<>();
@@ -68,6 +71,8 @@ public class TrainController {
         for (int i = 0; i < this.amountOfStations; i++)
         {
             Station _station = new Station();
+            _station.setXScale(this.stationWidth);
+            _station.setYScale(this.stationWidth);
             this.stations.add(_station);
             this.simObjects.add(_station);
         }
@@ -82,20 +87,19 @@ public class TrainController {
             if (i < 4)
             {
                 _trackIndex = i*amountOfTracksBetweenEachCorner + amountOfTracksBetweenEachCorner - 1;
-                Track _track = tracks.get(_trackIndex);
-                Station _station = stations.get(i);
-                _track.setStationNextToTrack(_station);
-                this.simObjects.add(_track);
             }
             else
             {
                 _trackIndex = ((i-4) * amountOfTracksBetweenEachCorner + (amountOfTracksBetweenEachCorner / 2)) - 1;
-                Track _track = tracks.get(_trackIndex);
-                Station _station = stations.get(i);
-                _track.setStationNextToTrack(_station);
-                this.simObjects.add(_track);
             }
-            System.out.println("Station " + i + " = Track " + _trackIndex);
+            Track _track = tracks.get(_trackIndex);
+            Station _station = stations.get(i);
+            _track.setStationNextToTrack(_station);
+            Track _nextTrack = _track.getNextTrack();
+            _station.setNextTrack(_nextTrack);
+            _station.setX(_track.getX() + _track.getXScale() + (int) Math.cos(_track.getAngle()) * 10);
+            _station.setY(_track.getY() + _track.getYScale() + (int) Math.sin(_track.getAngle()) * 10);
+            System.out.println("Station " + i + ": Track = " + _trackIndex + ", x: " + _station.getX() + ", y: " + _station.getY());
         }
     }
 
@@ -103,6 +107,7 @@ public class TrainController {
     {
         int _loadTimeInGameTicks = (int) Math.ceil(loadTimeInMilliseconds / gameTicksPerMilliseconds);
         Train.setLoadTimeInGameTicks(_loadTimeInGameTicks);
+        Train.setSpeed(trainSpeed);
         for (int i = 0; i < this.amountOfTrains; i++)
         {
             // "stations" is needed for train route

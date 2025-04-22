@@ -4,14 +4,16 @@ public class Train extends SimObject {
     private static int loadTimeInGameTicks;
     private static int speed;
 
+    private String status;
     private final ArrayList<Station> trainRoute = new ArrayList<>();
-    private int routeIndex = 0;
+    private int trainRouteIndex = 0;
     private boolean isOnTrack = false;
     private boolean isInStation = true;
+    private int loadTimeInGameTicksLeft;
     private Track currentTrack;
     private Station currentStation;
-    private int dx;
-    private int dy;
+    private int dx = 0;
+    private int dy = 0;
 
     Train(ArrayList<Station> _stations)
     {
@@ -28,7 +30,7 @@ public class Train extends SimObject {
 
             for (int j = 0; j < trainRoute.size(); j++)
             {
-                Station _stationThatExistInRoute = trainRoute.get(j);
+                Station _stationThatExistInRoute = this.trainRoute.get(j);
                 if (_stationToAdd == _stationThatExistInRoute)
                 {
                     _canAddStation = false;
@@ -37,13 +39,14 @@ public class Train extends SimObject {
 
             if (_canAddStation == true)
             {
-                trainRoute.add(_stationToAdd);
+                this.trainRoute.add(_stationToAdd);
             }
             else
             {
                 i--;
             }
         }
+        moveToStation(this.trainRoute.get(0));
     }
 
     static public void setSpeed(int _speed)
@@ -59,6 +62,9 @@ public class Train extends SimObject {
     @Override
     public void gameTick()
     {
+        System.out.println(this.status + ". x:" + this.getX() + ", y: " + this.getY() + 
+        ", dx:" + this.dx + ", dy: " + this.dy);
+
         if (this.isOnTrack)
         {
             this.moveTrainAlongTrack();
@@ -70,7 +76,18 @@ public class Train extends SimObject {
         }
         else if (this.isInStation)
         {
-            this.currentTrack = this.currentStation.getNextTrack();
+            if (this.loadTimeInGameTicksLeft == 0)
+            {
+                this.currentTrack = this.currentStation.getNextTrack();
+                this.isInStation = false;
+                this.isOnTrack = true;
+                moveToTrack(this.currentTrack.getNextTrack());
+            }
+            else
+            {
+                this.loadTimeInGameTicksLeft--;
+                this.status = "Loading to train, " + this.loadTimeInGameTicksLeft + " gameticks left";
+            }
         }
     }
 
@@ -84,24 +101,38 @@ public class Train extends SimObject {
     {
         if (this.currentTrack.isNextToStation() == true)
         {
-            if (this.currentTrack.getStationNextToTrack() == this.trainRoute.get(routeIndex) && 
-            this.currentTrack.getStationNextToTrack().isTrackAvailable() == true)
+            Station _nextStation = this.currentTrack.getStationNextToTrack();
+            if (_nextStation == this.trainRoute.get(trainRouteIndex) && _nextStation.isTrackAvailable() == true)
             {
-                this.moveToStation(this.currentTrack.getStationNextToTrack());
+                this.moveToStation(_nextStation);
+                this.trainRouteIndex++;
             }
         }
         else
         {
-            // If track has no trains
-            if (this.currentTrack.getNextTrack().isEmpty())
-            {
-                this.currentTrack = this.currentTrack.getNextTrack();
-
-                // 0 degrees is north and increases clockwise
-                dx = (int) Math.sin(this.currentTrack.getAngle()) * Train.speed;
-                dy = (int) Math.cos(this.currentTrack.getAngle()) * Train.speed;
-            }
+            moveToTrack(this.currentTrack.getNextTrack());
         }
+    }
+
+    private void moveToTrack(Track _track)
+    {
+        // If next track has no trains
+        if (_track.isEmpty())
+        {
+            this.currentTrack.setEmpty(true);
+            this.currentTrack = _track;
+            _track.setEmpty(false);
+            // 0 degrees is north and increases counterclockwise (to account for unit circle)
+            this.dx = (int) Math.sin(_track.getAngle()) * Train.speed;
+            this.dy = (int) Math.cos(_track.getAngle()) * Train.speed;
+
+            this.status = "Moving along track " + _track + " towards " + this.trainRoute.get(this.trainRouteIndex);
+        }
+        else
+        {
+            this.status = "Waiting to get to track " + _track;
+        }
+        
     }
 
     private void moveToStation(Station _station)
@@ -111,5 +142,7 @@ public class Train extends SimObject {
         _station.setAmountOfTrainsOnStation(_station.getAmountOfTrainsOnStation() + 1);
         this.isOnTrack = false;
         this.isInStation = true;
+        this.loadTimeInGameTicksLeft = Train.loadTimeInGameTicks;
+        this.status = "Loading to train, " + this.loadTimeInGameTicksLeft + " gameticks left";
     }
 }

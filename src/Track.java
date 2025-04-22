@@ -3,7 +3,7 @@ public class Track extends SimObject {
     private static int trackLength;
     private Track nextTrack;
     private boolean isNextToStation;
-    private boolean isEmpty;
+    private boolean isEmpty = true;
     private Station stationNextToTrack;
     // 0 degrees is north and increases counterclockwise (to account for unit circle)
     private final int angle;
@@ -37,6 +37,11 @@ public class Track extends SimObject {
     public boolean isNextToStation()
     {
         return this.isNextToStation;
+    }
+
+    public void setEmpty(boolean bool)
+    {
+        this.isEmpty = bool;
     }
 
     public boolean isEmpty()
