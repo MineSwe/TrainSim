@@ -7,7 +7,7 @@ public class TrainController {
     private final int stationWidth = 20;
 
     private final int amountOfTracksBetweenEachCorner = 4;
-    private final int amountOfStations = 6;
+    private final int amountOfStations = 4;
     private final int amountOfTracksPerStation = 2;
     private final int amountOfTrains = 4;
     private final int trainSpeed = 5;
@@ -44,8 +44,16 @@ public class TrainController {
                 this.tracks.add(_track);
                 this.simObjects.add(_track);
                 System.out.println(", x: " + _x + ", y: " + _y);
-                _x += _track.getXScale() - 1;
-                _y += _track.getYScale() - 1;
+                if (_track.getXScale() == 1)
+                {
+                    _x += _track.getXScale() - 1;
+                    _y += _track.getYScale();
+                }
+                else if (_track.getYScale() == 1)
+                {
+                    _x += _track.getXScale();
+                    _y += _track.getYScale() - 1;
+                }
             }
             _angle -= 90;
         }
@@ -95,10 +103,11 @@ public class TrainController {
             Track _track = tracks.get(_trackIndex);
             Station _station = stations.get(i);
             _track.setStationNextToTrack(_station);
+            _track.setNextToStation(true);
             Track _nextTrack = _track.getNextTrack();
             _station.setNextTrack(_nextTrack);
-            _station.setX(_track.getX() + _track.getXScale() + (int) Math.cos(_track.getAngle()) * 10);
-            _station.setY(_track.getY() + _track.getYScale() + (int) Math.sin(_track.getAngle()) * 10);
+            _station.setX(_track.getX() + _track.getXScale() + (int) Math.cos(Math.toRadians(_track.getAngle())) * 10);
+            _station.setY(_track.getY() + _track.getYScale() + (int) Math.sin(Math.toRadians(_track.getAngle())) * 10);
             System.out.println("Station " + i + ": Track = " + _trackIndex + ", x: " + _station.getX() + ", y: " + _station.getY());
         }
     }
