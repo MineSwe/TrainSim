@@ -1,7 +1,14 @@
+import java.awt.Color;
+
 public class Station extends SimObject {
     private static int amountOfTracksPerStation;
     private int amountOfTrainsOnStation = 0;
     private Track nextTrack;
+
+    Station(Color _color)
+    {
+        this.setColor(_color);
+    }
 
     public static void setAmountOfTracksPerStation(int _amountOfTracksPerStation)
     {

@@ -1,8 +1,10 @@
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class Train extends SimObject {
     private static int loadTimeInGameTicks;
     private static int speed;
+    private static int width;
 
     private String status;
     private final ArrayList<Station> trainRoute = new ArrayList<>();
@@ -15,9 +17,12 @@ public class Train extends SimObject {
     private int dx = 0;
     private int dy = 0;
 
-    Train(ArrayList<Station> _stations)
+    Train(ArrayList<Station> _stations, Color _color)
     {
         generateTrainRoute(_stations);
+        this.setColor(_color);
+        this.setXScale(Train.width);
+        this.setYScale(Train.width);
     }
 
     private void generateTrainRoute(ArrayList<Station> _stations)
@@ -57,6 +62,11 @@ public class Train extends SimObject {
     static public void setLoadTimeInGameTicks(int _loadTimeInGameTicks)
     {
         Train.loadTimeInGameTicks = _loadTimeInGameTicks;
+    }
+
+    static public void setWidth(int _width)
+    {
+        Train.width = _width;
     }
 
     @Override

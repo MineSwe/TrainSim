@@ -1,11 +1,23 @@
 import java.awt.Color;
+import javax.swing.JLabel;
 
 public class SimObject {
+    private JLabel label;
     private int x;
     private int y;
     private int xScale;
     private int yScale;
     private Color color;
+
+    public void setLabel(JLabel _label)
+    {
+        this.label = _label;
+    }
+
+    public JLabel getLabel()
+    {
+        return this.label;
+    }
 
     public void setX(int _x)
     {
@@ -45,6 +57,16 @@ public class SimObject {
     public int getYScale()
     {
         return this.yScale;
+    }
+
+    public void setColor(Color _color)
+    {
+        this.color = _color;
+    }
+
+    public Color getColor()
+    {
+        return this.color;
     }
     
     public void gameTick()

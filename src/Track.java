@@ -1,5 +1,6 @@
+import java.awt.Color;
+
 public class Track extends SimObject {
-    private static int trackIndex = 0;
     private static int trackLength;
     private Track nextTrack;
     private boolean isNextToStation = false;
@@ -8,11 +9,12 @@ public class Track extends SimObject {
     // 0 degrees is north and increases counterclockwise (to account for unit circle)
     private final int angle;
 
-    Track(int _x, int _y, int _angle)
+    Track(int _x, int _y, int _angle, Color _color)
     {
         this.setX(_x);
         this.setY(_y);
         this.angle = _angle;
+        this.setColor(_color);
         this.setXScale((int) (Track.trackLength * Math.sin(Math.toRadians(_angle)) * -1));
         this.setYScale((int) (Track.trackLength * Math.cos(Math.toRadians(_angle)) * -1));
         // In case x-/y-scale = 0, add one for width
@@ -20,12 +22,10 @@ public class Track extends SimObject {
         {
             this.setXScale(1);
         }
-        else if (this.getYScale() == 0)
+        if (this.getYScale() == 0)
         {
             this.setYScale(1);
         }
-        System.out.print("Track " + this.trackIndex + ": ID = " + this + ", Angle = " + this.angle + ", xScale = " + this.getXScale() + ", yScale = " + this.getYScale());
-        this.trackIndex++;
     }
 
     public static void setTrackLength(int _trackLength)
