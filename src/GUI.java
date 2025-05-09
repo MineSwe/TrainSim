@@ -33,14 +33,10 @@ public class GUI extends JFrame{
         return _label;
     }
 
-    public JLabel updateComponent(JLabel _label, int _x, int _y, int _xScale, int _yScale)
-    {
-        int _displayX = Math.min(_x, _x + _xScale);
-        int _displayY = Math.min(_y, _y + _yScale);
-        int _width = Math.abs(_xScale);
-        int _height = Math.abs(_yScale);
-        
-        _label.setBounds(_displayX, _displayY, _width, _height);
+    public JLabel updateComponent(JLabel _label, int _x, int _y, int _xScale, int _yScale, boolean _isShowing)
+    {   
+        _label.setBounds(_x, _y, _xScale, _yScale);
+        _label.setVisible(_isShowing);
         this.revalidate();
         this.repaint();
         return _label;

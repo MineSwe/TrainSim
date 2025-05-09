@@ -8,15 +8,25 @@ public class Track extends SimObject {
     private Station stationNextToTrack;
     // 0 degrees is north and increases counterclockwise (to account for unit circle)
     private final int angle;
+    // This is for calculations, since the GUI (which takes from SimObject) doesn't support negative width
+    private final int startX;
+    private final int startY;
+    private final int endX;
+    private final int endY;
 
     Track(int _x, int _y, int _angle, Color _color)
     {
-        this.setX(_x);
-        this.setY(_y);
+        this.startX = _x;
+        this.startY = _y;
+        this.endX = (int) (Track.trackLength * Math.sin(Math.toRadians(_angle)) * -1);
+        this.endY = (int) (Track.trackLength * Math.cos(Math.toRadians(_angle)) * -1);
         this.angle = _angle;
         this.setColor(_color);
-        this.setXScale((int) (Track.trackLength * Math.sin(Math.toRadians(_angle)) * -1));
-        this.setYScale((int) (Track.trackLength * Math.cos(Math.toRadians(_angle)) * -1));
+        // This is for the display, since it doesn't support negative width
+        this.setX(Math.min(_x, _x + endX));
+        this.setY(Math.min(_y, _y + endY));
+        this.setXScale(Math.abs(endX));
+        this.setYScale(Math.abs(endY));
         // In case x-/y-scale = 0, add one for width
         if (this.getXScale() == 0)
         {
@@ -76,5 +86,25 @@ public class Track extends SimObject {
     public int getAngle()
     {
         return this.angle;
+    }
+
+    public int getStartX()
+    {
+        return this.startX;
+    }
+
+    public int getStartY()
+    {
+        return this.startY;
+    }
+
+    public int getEndX()
+    {
+        return this.endX;
+    }
+
+    public int getEndY()
+    {
+        return this.endY;
     }
 }

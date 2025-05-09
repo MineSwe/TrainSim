@@ -8,6 +8,7 @@ public class SimObject {
     private int xScale;
     private int yScale;
     private Color color;
+    private boolean isShowing = true;
 
     public void setLabel(JLabel _label)
     {
@@ -67,6 +68,16 @@ public class SimObject {
     public Color getColor()
     {
         return this.color;
+    }
+
+    public void setIsShowing(boolean _isShowing)
+    {
+        this.isShowing = _isShowing;
+    }
+
+    public boolean getIsShowing()
+    {
+        return this.isShowing;
     }
     
     public void gameTick()

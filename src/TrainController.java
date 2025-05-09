@@ -3,13 +3,14 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 
 public class TrainController {
-    private GUI gui;
+    private final GUI gui;
     private final int frameSizeX = 400;
     private final int frameSizeY = 400;
     private final int trackBottomRightX = 200;
     private final int trackBottomRightY = 200;
     private final int trackLength = 40;
     private final int stationWidth = 20;
+    private final int trainWidth = 5;
 
     private final Color trackColor = Color.GRAY;
     private final Color stationColor = Color.RED;
@@ -17,11 +18,11 @@ public class TrainController {
 
     private final int amountOfTracksBetweenEachCorner = 4;
     private final int amountOfStations = 4;
-    private final int amountOfTracksPerStation = 2;
-    private final int amountOfTrains = 4;
+    private final int amountOfTracksPerStation = 1;
+    private final int amountOfTrains = 10;
     private final int trainSpeed = 5;
     private final int loadTimeInMilliseconds = 5000;
-    private final int gameTicksPerMilliseconds = 1000;
+    private final int gameTicksPerMilliseconds = 34;
     private boolean gameIsRunning = true; // DON'T DO IT FINAL, PLEASE
 
     private final ArrayList<SimObject> simObjects = new ArrayList<>();
@@ -38,7 +39,7 @@ public class TrainController {
         addStationsToTrack();
         createTrains();
         createGUIComponents();
-        new Thread(() -> startGameTick()).start();
+        startGameTick();
     }
 
     private void createTracks()
@@ -55,16 +56,8 @@ public class TrainController {
                 this.tracks.add(_track);
                 this.simObjects.add(_track);
 
-                if (_track.getXScale() == 1)
-                {
-                    _x += _track.getXScale() - 1;
-                    _y += _track.getYScale();
-                }
-                else if (_track.getYScale() == 1)
-                {
-                    _x += _track.getXScale();
-                    _y += _track.getYScale() - 1;
-                }
+                _x += _track.getEndX();
+                _y += _track.getEndY();
             }
             _angle -= 90;
         }
@@ -117,13 +110,26 @@ public class TrainController {
             _track.setNextToStation(true);
             Track _nextTrack = _track.getNextTrack();
             _station.setNextTrack(_nextTrack);
-            _station.setX(_track.getX() + _track.getXScale() + (int) Math.cos(Math.toRadians(_track.getAngle())) * 10);
-            _station.setY(_track.getY() + _track.getYScale() + (int) Math.sin(Math.toRadians(_track.getAngle())) * 10);
+
+            System.out.println("Angle " + i + ": " + _track.getAngle());
+
+            int _dx, _dy;
+            switch (_track.getAngle())
+            {
+                case 0: _dx = 0; _dy = 0; break;
+                case -90: _dx = 0; _dy = -1; break;
+                case -180: _dx = -1; _dy = -1; break;
+                case -270: _dx = -1; _dy = 0; break;
+                default: _dx = 0; _dy = 0;
+            }
+            _station.setX(_track.getStartX() + _track.getEndX() + _dx * this.stationWidth);
+            _station.setY(_track.getStartY() + _track.getEndY() + _dy * this.stationWidth);
         }
     }
 
     private void createTrains()
     {
+        Train.setWidth(trainWidth);
         int _loadTimeInGameTicks = (int) Math.ceil(this.loadTimeInMilliseconds / this.gameTicksPerMilliseconds);
         Train.setLoadTimeInGameTicks(_loadTimeInGameTicks);
         Train.setSpeed(trainSpeed);
@@ -169,7 +175,7 @@ public class TrainController {
         {
             _simObject.gameTick();
             JLabel _newLabel = this.gui.updateComponent(_simObject.getLabel(), _simObject.getX(), _simObject.getY(), 
-            _simObject.getXScale(), _simObject.getYScale());
+            _simObject.getXScale(), _simObject.getYScale(), _simObject.getIsShowing());
             _simObject.setLabel(_newLabel);
         }
     }
