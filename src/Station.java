@@ -42,6 +42,6 @@ public class Station extends SimObject {
 
     public boolean isTrackAvailable()
     {
-        return this.amountOfTrainsOnStation <= Station.amountOfTracksPerStation;
+        return this.amountOfTrainsOnStation < Station.amountOfTracksPerStation;
     }
 }

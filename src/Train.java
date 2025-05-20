@@ -8,6 +8,7 @@ public class Train extends SimObject {
 
     private String status;
     private final ArrayList<Station> trainRoute = new ArrayList<>();
+    private final ArrayList<Station> startTrainRoute = new ArrayList<>();
     private int trainRouteIndex = 0;
     private boolean isOnTrack = false;
     private boolean isInStation = true;
@@ -29,14 +30,22 @@ public class Train extends SimObject {
     {
         for (int i = 0; i < _stations.size(); i++)
         {
+            System.out.println("Trying for train " + this + ", route " + i);
             int _randomStationsIndex = (int)(Math.random() * _stations.size());
             Station _stationToAdd = _stations.get(_randomStationsIndex);
             boolean _canAddStation = true;
 
-            for (int j = 0; j < trainRoute.size(); j++)
+            for (Station _stationThatExistInRoute : this.trainRoute)
             {
-                Station _stationThatExistInRoute = this.trainRoute.get(j);
                 if (_stationToAdd == _stationThatExistInRoute)
+                {
+                    _canAddStation = false;
+                }
+            }
+
+            if (i == 0)
+            {
+                if (_stationToAdd.isTrackAvailable() == false)
                 {
                     _canAddStation = false;
                 }
@@ -45,6 +54,10 @@ public class Train extends SimObject {
             if (_canAddStation == true)
             {
                 this.trainRoute.add(_stationToAdd);
+                if (i == 0)
+                {
+                    startTrainRoute.add(_stationToAdd);
+                }
             }
             else
             {
@@ -76,21 +89,27 @@ public class Train extends SimObject {
 
         if (this.isOnTrack)
         {
-            this.moveTrainAlongTrack();
             if (Math.abs(this.currentTrack.getStartX() - this.getX() + this.currentTrack.getEndX()) <= Math.abs(this.dx)+1 && 
             Math.abs(this.currentTrack.getStartY() - this.getY() + this.currentTrack.getEndY()) <= Math.abs(this.dy)+1)
             {
                 this.moveTrainFromTrack();
+            }
+            else
+            {
+                this.moveTrainAlongTrack();
             }
         }
         else if (this.isInStation)
         {
             if (this.loadTimeInGameTicksLeft == 0)
             {
-                this.currentStation.setAmountOfTrainsOnStation(this.currentStation.getAmountOfTrainsOnStation()-1);
-                System.out.println("Station has " + currentStation.getAmountOfTrainsOnStation() + " tracks");
-                this.setIsShowing(true);
-                moveToTrack(this.currentStation.getNextTrack());
+                if (this.currentStation.getNextTrack().isEmpty())
+                {
+                    this.currentStation.setAmountOfTrainsOnStation(this.currentStation.getAmountOfTrainsOnStation()-1);
+                    System.out.println("Station " + this + " has " + currentStation.getAmountOfTrainsOnStation() + " tracks");
+                    this.setIsShowing(true);
+                    moveToTrack(this.currentStation.getNextTrack());
+                }
             }
             else
             {
@@ -112,14 +131,21 @@ public class Train extends SimObject {
         {
             this.status = "Track = " + currentTrack.getStationNextToTrack() + ", Train " + this + " wants = " + this.trainRoute.get(this.trainRouteIndex);
             Station _nextStation = this.currentTrack.getStationNextToTrack();
-            if (_nextStation == this.trainRoute.get(this.trainRouteIndex) && _nextStation.isTrackAvailable() == true)
+            if (_nextStation == this.trainRoute.get(this.trainRouteIndex))
             {
-                this.currentTrack.setEmpty(true);
-                this.moveToStation(_nextStation);
-                this.trainRouteIndex++;
-                if (trainRouteIndex == trainRoute.size()-1)
+                if (_nextStation.isTrackAvailable() == true)
                 {
-                    trainRouteIndex = 0;
+                    this.currentTrack.setEmpty(true);
+                    this.trainRouteIndex++;
+                    if (this.trainRouteIndex == trainRoute.size()-1)
+                    {
+                        this.trainRouteIndex = 0;
+                    }
+                    this.moveToStation(_nextStation);
+                }
+                else
+                {
+                    System.out.println(this + " can't reach station");
                 }
             }
             else
@@ -167,7 +193,7 @@ public class Train extends SimObject {
         this.currentTrack = null;
         this.setIsShowing(false);
         _station.setAmountOfTrainsOnStation(_station.getAmountOfTrainsOnStation() + 1);
-        System.out.println("Station has " + _station.getAmountOfTrainsOnStation() + " tracks");
+        System.out.println("Station " + _station + " has " + _station.getAmountOfTrainsOnStation() + " tracks");
         this.isOnTrack = false;
         this.isInStation = true;
         this.loadTimeInGameTicksLeft = Train.loadTimeInGameTicks;

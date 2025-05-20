@@ -18,8 +18,9 @@ public class TrainController {
 
     private final int amountOfTracksBetweenEachCorner = 4;
     private final int amountOfStations = 4;
-    private final int amountOfTracksPerStation = 1;
-    private final int amountOfTrains = 10;
+    private final int amountOfTracksPerStation = 2;
+    // Trains can't be more than amountOfStations * amountOfTracksPerStation
+    private final int amountOfTrains = 8;
     private final int trainSpeed = 5;
     private final int loadTimeInMilliseconds = 5000;
     private final int gameTicksPerMilliseconds = 34;
