@@ -14,16 +14,20 @@ public class GUI extends JFrame{
 
     public JLabel createObject(int _x, int _y, int _xScale, int _yScale, Color _color)
     {
-        // THIS DOESNT WORK FOR TRAINS AND STATIONS
-        int _displayX = Math.min(_x, _x + _xScale);
-        int _displayY = Math.min(_y, _y + _yScale);
-        int _width = Math.abs(_xScale);
-        int _height = Math.abs(_yScale);
-
-        System.out.println("Labels: x: " + _displayX + ", y: " + _displayY + ", width: " + _width + ", height: " + _height);
-
+        // This is for the display, since it doesn't support negative width
+        if (_xScale < 0)
+        {
+            _x += _xScale;
+            _xScale = -_xScale;
+        }
+        if (_yScale < 0)
+        {
+            _y += _yScale;
+            _yScale = -_yScale;
+        }
         JLabel _label = new JLabel();
-        _label.setBounds(_displayX, _displayY, _width, _height);
+        System.out.println("Labels: x: " + _x + ", y: " + _y + ", width: " + _xScale + ", height: " + _yScale);
+        _label.setBounds(_x, _y, _xScale, _yScale);
         _label.setOpaque(true);
         _label.setBackground(_color);
         _label.setVisible(true);

@@ -6,8 +6,8 @@ public class TrainController {
     private final GUI gui;
     private final int frameSizeX = 400;
     private final int frameSizeY = 400;
-    private final int trackBottomRightX = 200;
-    private final int trackBottomRightY = 200;
+    private final int trackBottomRightX = 125;
+    private final int trackBottomRightY = 250;
     private final int trackLength = 40;
     private final int stationWidth = 20;
     private final int trainWidth = 5;
@@ -57,8 +57,17 @@ public class TrainController {
                 this.tracks.add(_track);
                 this.simObjects.add(_track);
 
-                _x += _track.getEndX();
-                _y += _track.getEndY();
+                System.out.println("Track " + i + j + ": x: " + _x + ", y: " + _y + 
+                ", xScale: " + _track.getXScale() + ", yScale: " + _track.getYScale());
+
+                if(_track.getXScale() == 1)
+                {
+                    _y += _track.getYScale();
+                }
+                if (_track.getYScale() == 1)
+                {
+                    _x += _track.getXScale();
+                }
             }
             _angle -= 90;
         }
@@ -112,8 +121,6 @@ public class TrainController {
             Track _nextTrack = _track.getNextTrack();
             _station.setNextTrack(_nextTrack);
 
-            System.out.println("Angle " + i + ": " + _track.getAngle());
-
             int _dx, _dy;
             switch (_track.getAngle())
             {
@@ -123,8 +130,8 @@ public class TrainController {
                 case -270: _dx = -1; _dy = 0; break;
                 default: _dx = 0; _dy = 0;
             }
-            _station.setX(_track.getStartX() + _track.getEndX() + _dx * this.stationWidth);
-            _station.setY(_track.getStartY() + _track.getEndY() + _dy * this.stationWidth);
+            _station.setX(_track.getXScale() + _track.getX() + _dx * this.stationWidth);
+            _station.setY(_track.getYScale() + _track.getY() + _dy * this.stationWidth);
         }
     }
 

@@ -30,7 +30,6 @@ public class Train extends SimObject {
     {
         for (int i = 0; i < _stations.size(); i++)
         {
-            System.out.println("Trying for train " + this + ", route " + i);
             int _randomStationsIndex = (int)(Math.random() * _stations.size());
             Station _stationToAdd = _stations.get(_randomStationsIndex);
             boolean _canAddStation = true;
@@ -89,8 +88,8 @@ public class Train extends SimObject {
 
         if (this.isOnTrack)
         {
-            if (Math.abs(this.currentTrack.getStartX() - this.getX() + this.currentTrack.getEndX()) <= Math.abs(this.dx)+1 && 
-            Math.abs(this.currentTrack.getStartY() - this.getY() + this.currentTrack.getEndY()) <= Math.abs(this.dy)+1)
+            if (Math.abs(this.currentTrack.getX() - this.getX() + this.currentTrack.getXScale()) <= Math.abs(this.dx)+1 && 
+            Math.abs(this.currentTrack.getY() - this.getY() + this.currentTrack.getYScale()) <= Math.abs(this.dy)+1)
             {
                 this.moveTrainFromTrack();
             }
@@ -172,8 +171,8 @@ public class Train extends SimObject {
             this.isInStation = false;
             this.isOnTrack = true;
             _track.setEmpty(false);
-            this.setX(_track.getStartX());
-            this.setY(_track.getStartY());
+            this.setX(_track.getX());
+            this.setY(_track.getY());
             // 0 degrees is north and increases counterclockwise (to account for unit circle)
             this.dx = (int) Math.sin(Math.toRadians(_track.getAngle())) * -1 * Train.speed;
             this.dy = (int) Math.cos(Math.toRadians(_track.getAngle())) * -1 * Train.speed;
