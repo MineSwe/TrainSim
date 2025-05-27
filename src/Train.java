@@ -105,7 +105,6 @@ public class Train extends SimObject {
                 if (this.currentStation.getNextTrack().isEmpty())
                 {
                     this.currentStation.setAmountOfTrainsOnStation(this.currentStation.getAmountOfTrainsOnStation()-1);
-                    System.out.println("Station " + this + " has " + currentStation.getAmountOfTrainsOnStation() + " tracks");
                     this.setIsShowing(true);
                     moveToTrack(this.currentStation.getNextTrack());
                 }
@@ -144,7 +143,7 @@ public class Train extends SimObject {
                 }
                 else
                 {
-                    System.out.println(this + " can't reach station");
+                    //System.out.println(this + " can't reach station");
                 }
             }
             else
@@ -192,7 +191,6 @@ public class Train extends SimObject {
         this.currentTrack = null;
         this.setIsShowing(false);
         _station.setAmountOfTrainsOnStation(_station.getAmountOfTrainsOnStation() + 1);
-        System.out.println("Station " + _station + " has " + _station.getAmountOfTrainsOnStation() + " tracks");
         this.isOnTrack = false;
         this.isInStation = true;
         this.loadTimeInGameTicksLeft = Train.loadTimeInGameTicks;

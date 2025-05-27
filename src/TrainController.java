@@ -1,8 +1,11 @@
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-public class TrainController {
+public class TrainController implements ActionListener{
     private final GUI gui;
     private final int frameSizeX = 400;
     private final int frameSizeY = 400;
@@ -17,10 +20,10 @@ public class TrainController {
     private final Color trainColor = Color.BLUE;
 
     private final int amountOfTracksBetweenEachCorner = 4;
-    private final int amountOfStations = 4;
+    private int amountOfStations = 4;
     private final int amountOfTracksPerStation = 2;
     // Trains can't be more than amountOfStations * amountOfTracksPerStation
-    private final int amountOfTrains = 8;
+    private int amountOfTrains = 8;
     private final int trainSpeed = 5;
     private final int loadTimeInMilliseconds = 5000;
     private final int gameTicksPerMilliseconds = 34;
@@ -31,14 +34,18 @@ public class TrainController {
     private final ArrayList<Station> stations = new ArrayList<>();
     private final ArrayList<Train> trains = new ArrayList<>();
 
+    private JComboBox amountOfStationsComboBox;
+    private JComboBox amountOfTrainsPerStationComboBox;
+    private JComboBox amountOfTrainsComboBox;
+
     TrainController()
     {
         this.gui = new GUI(this.frameSizeX, this.frameSizeY);
         createTracks();
         linkTracks();
-        createStations();
-        addStationsToTrack();
-        createTrains();
+        createStations(0);
+        addStationsToTrack(0);
+        createTrains(0);
         createGUIComponents();
         startGameTick();
     }
@@ -56,9 +63,6 @@ public class TrainController {
                 Track _track = new Track(_x, _y, _angle, this.trackColor);
                 this.tracks.add(_track);
                 this.simObjects.add(_track);
-
-                System.out.println("Track " + i + j + ": x: " + _x + ", y: " + _y + 
-                ", xScale: " + _track.getXScale() + ", yScale: " + _track.getYScale());
 
                 if(_track.getXScale() == 1)
                 {
@@ -87,10 +91,10 @@ public class TrainController {
         }
     }
 
-    private void createStations()
+    private void createStations(int _startingIndex)
     {
         Station.setAmountOfTracksPerStation(this.amountOfTracksPerStation);
-        for (int i = 0; i < this.amountOfStations; i++)
+        for (int i = _startingIndex; i < this.amountOfStations; i++)
         {
             Station _station = new Station(this.stationColor);
             _station.setXScale(this.stationWidth);
@@ -101,9 +105,9 @@ public class TrainController {
     }
 
     // Adds 4 stations to tracks that end in a corner, then 4 stations to tracks that end in the middle
-    private void addStationsToTrack()
+    private void addStationsToTrack(int _startingIndex)
     {
-        for (int i = 0; i < this.amountOfStations; i++)
+        for (int i = _startingIndex; i < this.amountOfStations; i++)
         {
             int _trackIndex;
             if (i < 4)
@@ -135,18 +139,27 @@ public class TrainController {
         }
     }
 
-    private void createTrains()
+    private void createTrains(int _startingIndex)
     {
         Train.setWidth(trainWidth);
         int _loadTimeInGameTicks = (int) Math.ceil(this.loadTimeInMilliseconds / this.gameTicksPerMilliseconds);
         Train.setLoadTimeInGameTicks(_loadTimeInGameTicks);
         Train.setSpeed(trainSpeed);
-        for (int i = 0; i < this.amountOfTrains; i++)
+        for (int i = _startingIndex; i < this.amountOfTrains; i++)
         {
             // "stations" is needed for train route
             Train _train = new Train(this.stations, this.trainColor);
             this.trains.add(_train);
             this.simObjects.add(_train);
+        }
+    }
+
+    private void removeAllTrains()
+    {
+        for (Train _train : trains)
+        {
+            trains.remove(_train);
+            simObjects.remove(_train);
         }
     }
 
@@ -161,6 +174,30 @@ public class TrainController {
                     _simObject.getYScale(), 
                     _simObject.getColor());
             _simObject.setLabel(_label);
+        }
+        this.amountOfStationsComboBox = this.gui.createComboBox(50, 300, 100, 50, 3, 6, this);
+        this.amountOfTrainsPerStationComboBox = this.gui.createComboBox(150, 300, 100, 50, 1, 4, this);
+        this.amountOfTrainsComboBox = this.gui.createComboBox(250, 300, 100, 50, 1, 16, this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == this.amountOfStationsComboBox)
+        {
+            int _amountOfStations = (int) (this.amountOfStationsComboBox.getSelectedItem());
+            createStations(_amountOfStations);
+            addStationsToTrack(_amountOfStations);
+            removeAllTrains();
+        }
+        else if (e.getSource() == amountOfTrainsPerStationComboBox)
+        {
+            int _amountOfTrainsPerStation = (int) (this.amountOfTrainsPerStationComboBox.getSelectedItem());
+            Station.setAmountOfTracksPerStation(_amountOfTrainsPerStation);
+        }
+        else if (e.getSource() == amountOfTrainsComboBox)
+        {
+            int _amountOfTrains = (int) (this.amountOfTrainsComboBox.getSelectedItem());
+            createTrains(_amountOfTrains);
         }
     }
 
